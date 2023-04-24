@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 """ Console Module """
+from ast import arg
 import cmd
 import sys
 from models.base_model import BaseModel
@@ -114,34 +115,44 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """ Create an object of any class"""
+        """ 
+        Create an object of any class, Creates a new instance of a given class and saves it to afile.
+        Usage: create <class name> <param 1> <param 2> ...
+        Params should be in the form key=value
+        """
         args = args.split()
-        if not args[0]:
+        if not arg:
             print("** class name missing **")
             return
-        elif args[0] not in HBNBCommand.classes:
+        args = arg.split()
+        class_name = args[0]
+        try:
+            cls = getattr(models, class_name)
+        except AttributeError:
             print("** class doesn't exist **")
             return
 
-        new_instance = HBNBCommand.classes[args[0]]()
-        args = args[1:]
-        for arg in args:
-            kvp = arg.split('=')
-            v = kvp[1]
-            if v[0] == v[-1] == '"':
-                if '_' in v:
-                    v = eval(v).replace('_', ' ')
+        kwargs = {}
+        for param in args[1:]:
+            try:
+                key, value = param.split("=")
+                # Handle string value
+                if value.startswith('"') and value.endswith('"'):
+                    value = value[1:-1].replace('_', ' ').replace('\\"', '"')
+                # Handle float value
+                elif '.' in value:
+                    value = float(value)
+                # Handle integer value
                 else:
-                    v = eval(v)
-            elif '.' in v:
-                v = float(eval(v))
-            elif '.' not in v:
-                v = int(eval(v))
-            else:
+                    value = int(value)
+                kwargs[key] = value
+            except:
+                # Skip any parameters that can't be parsed
                 continue
-            setattr(new_instance, kvp[0], v)
-        print(new_instance.id)
-        storage.save()
+
+        instance = cls(**kwargs)
+        instance.save()
+        print(instance.id)
 
     def help_create(self):
         """ Help information for the create method """
