@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" Place Module for HBNB project """
+"""Place moduel for HBNB project"""
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, Integer, ForeignKey, Float, Table
 from sqlalchemy.orm import relationship
@@ -27,14 +27,14 @@ class Place(BaseModel, Base):
     price_by_night = Column(Integer, nullable=False, default=0)
     latitude = Column(Float)
     longitude = Column(Float)
-    reviews = relationship("Review", backref="place", cascade="all, delete")
+    reviews = relationship("Review", backref='place', cascade="all, delete")
     amenities = relationship("Amenity", secondary=place_amenity,
                              viewonly=False)
 
     @property
     def reviews(self):
-        """Getter attribute returns list of review instances
-        with place_id equal to the current Place.id
+        """Getter attribute reviews that returns the list of Review instances
+        with place_id equals to the current Place.id
         """
         from models import storage
         my_list = []
@@ -56,7 +56,7 @@ class Place(BaseModel, Base):
         for amenity in extracted_amenities:
             if self.id == amenity.amenity_ids:
                 my_list.append(amenity)
-        return my_list
+        return my_listobj.id
 
     @amenities.setter
     def amenities(self, obj):
