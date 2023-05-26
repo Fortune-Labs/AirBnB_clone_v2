@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" Module for testing file storage"""
+"""Test for db_storage"""
 import sys
 import unittest
 import inspect
